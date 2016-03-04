@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<ArrayOfRegex_Replacement xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Regex_Replacement>
+    <_regex>RWCString\(GetSvnRevision\(\)\)</_regex>
+    <_replacement>GetSvnRevision()</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>\*?\w*\*?proc\s*\=\s*\w*database\w*(?:\.|-&gt;)storedproc\s*\(([^,\)]*)[\s\n\r]*\,?[\s\n\r]*.*\);</_regex>
+    <_replacement>ATN::SmartPtr&lt;Thot::StoredProc&gt;::TUnsafe proc = CBatch::DBOracle_Instance()-&gt;GetStoredProc($1);</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>\*?\w+\s*\=\s*\*?\w*proc\w*(?:\.|-&gt;)execute\s*\(\s*\*?\w*conne(?:ct|x)ion\w*[^\)\n\r]*\);</_regex>
+    <_replacement>ATN::SmartPtr&lt;Thot::Result&gt;::TUnsafe result = proc-&gt;Execute();</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>while.*\(.*reader\(\)\)</_regex>
+    <_replacement>while((*result)())</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>\w*reader\s*\n\s*\&gt;\&gt;</_regex>
+    <_replacement>*result\n\t\t&gt;&gt;</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>\w*Reader\s*=\s*\w*Table.reader\(\);</_regex>
+    <_replacement />
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>\w*connection(?:\.|-&gt;)executesql\((.*)\).*</_regex>
+    <_replacement>ATN::SmartPtr&lt;Thot::Result&gt;::TUnsafe result = CBatch::DBOracle_Instance()-&gt;ExecuteQuery($1)</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>\s\*?\w*proc\w+\s*(\r\n\s*\&lt;\&lt;)</_regex>
+    <_replacement>\t*proc$1</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>\s+if \(\s*\!\*?\w*(?:table|status|result|proc|reader|rd|connection)\w*\s*(?:\.|-&gt;)isValid\(\)\s*\).*\n(\s*return\s*\w*\;|[^\{]*\{[^\}]*\})</_regex>
+    <_replacement />
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>\w*reader\s*\n\s*\&gt;\&gt;</_regex>
+    <_replacement>*result\n\t\t&gt;&gt;</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>\(\*m_prwv_(?:rw|i)(\w*)\)\[\w*\]\s*\=\s*([^\;]*);</_regex>
+    <_replacement>rhsObj-&gt;set$1($2);</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>\(\*m_prwv_(?:dt)(\w*)\)\[\w*\]\s*\=\s*RWDBValue\(RWDBDateTime\(([^\;]*)\.ToRWDateTimeCopy\(\)\)\).asDate\(\);</_regex>
+    <_replacement>rhsObj-&gt;set$1($2.ToAtnDate());</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>\*?\w*status\s*\=\s*\*?\w*proc\w*(?:\.|-&gt;)fetchReturnParams\(\);</_regex>
+    <_replacement />
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>\s+\*?\w*TABLE\s*\=\s*\*?\w*RESULT(?:\.|-&gt;)table\(\);</_regex>
+    <_replacement />
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>\s+CREADER\s+\w*reader\(\*?\w*TABLE(?:\.|-&gt;)reader\(\)\);</_regex>
+    <_replacement />
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>//\s*Fetch des parametres</_regex>
+    <_replacement />
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>//\s*Passage des parametres</_regex>
+    <_replacement />
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>\t//\s*Declaration de la stored procedure et passage des parametres\s*\r\n</_regex>
+    <_replacement />
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>\s*\/\/\r\n</_regex>
+    <_replacement>\n</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>\s*\/\/\s*(:?[a-zA-Z]{3}|)(?:\s+le|)\s+([0-9]{2}\/[0-9]{2}\/|[0-9]{1}\/[0-9]{1}\/)[0-9]{4}.*</_regex>
+    <_replacement />
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>\w*Wrapper\s+\w*\((.*)\,.*\);</_regex>
+    <_replacement>ATN::SmartPtr&lt;Thot::StoredProc&gt;::TUnsafe proc = CBatch::DBOracle_Instance()-&gt;GetStoredProc($1);</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>RWCString</_regex>
+    <_replacement>cassiopae::CassString</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>,\s*m_(:?rw|s)\w+\s*\(\s*OFSTRING_NULL\s*\)\r\n</_regex>
+    <_replacement />
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>SetValue\(m_prwv_(?:rw|dt|\w)(\w*)\s*\,\s*(.*)\)\;</_regex>
+    <_replacement>filler-&gt;set$1($2);</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>(\s+(?:RWCString|cassiopae::CassString|std::string)\s+(?:rw|s)\w+)\s*\=\s*(?:OFSTRING_NULL|\"\"|\"\\0\");</_regex>
+    <_replacement>$1;</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>RWFile</_regex>
+    <_replacement>cassiopae::CFile</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>(\w+\.\w+)-&gt;~\w+::\w+\(\);</_regex>
+    <_replacement>delete $1;</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>(\s*CDate\s+dt\w+)\s*\=\s*CDate\(\);</_regex>
+    <_replacement>$1;</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>\&lt;\&lt;\s*((?:m_)?(?:dt|date)\w+|(?:m_)?\w+\.\w*(?:dt|date)\w+)\r\n</_regex>
+    <_replacement>&lt;&lt; $1.ToAtnDate()\r\n</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>m_rwConnection\.rollbackTransaction\(\);</_regex>
+    <_replacement>CBatch::DBOracle_Instance()-&gt;Rollback();</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>m_rwConnection\.commitTransaction\(\);</_regex>
+    <_replacement>CBatch::DBOracle_Instance()-&gt;Commit();</_replacement>
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>m_rwConnection\.beginTransaction\(\);</_regex>
+    <_replacement />
+  </Regex_Replacement>
+  <Regex_Replacement>
+    <_regex>RW_NPOS</_regex>
+    <_replacement>std::string::npos</_replacement>
+  </Regex_Replacement>
+</ArrayOfRegex_Replacement>
