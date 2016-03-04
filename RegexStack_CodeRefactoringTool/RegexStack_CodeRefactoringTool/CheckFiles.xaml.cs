@@ -19,6 +19,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.IO;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace RegexStack_CodeRefactoringTool
 {
@@ -45,7 +46,7 @@ namespace RegexStack_CodeRefactoringTool
                 if (fileExtension != ".cpp" && fileExtension != ".h")
                     continue;
 
-                if (File.Exists(file + "_thot_refactoring"))
+                if (File.Exists(file + "_refactoring"))
                 {
                     AddCheckRow(file);
                 }
@@ -54,7 +55,7 @@ namespace RegexStack_CodeRefactoringTool
         private int GetFilesDiff(String filePath)
         {
             string[] fileContent = File.ReadAllLines(filePath);
-            string[] fileContentThotRefactoring = File.ReadAllLines(filePath + "_thot_refactoring");
+            string[] fileContentThotRefactoring = File.ReadAllLines(filePath + "_refactoring");
 
             int diffSize = fileContent.Count() - fileContentThotRefactoring.Count();
             diffSize = diffSize < 0 ? diffSize * -1 : diffSize;
@@ -77,7 +78,7 @@ namespace RegexStack_CodeRefactoringTool
 
                 this.grid_FileCheck.RowDefinitions.Add(rowDefinition);
 
-                var fileColElem = new TextBox();
+                var fileColElem = new System.Windows.Controls.TextBox();
                 fileColElem.Text = filePath;
                 fileColElem.IsReadOnly = true;
 
@@ -86,7 +87,7 @@ namespace RegexStack_CodeRefactoringTool
 
                 this.grid_FileCheck.Children.Add(fileColElem);
 
-                var checkButton = new Button();
+                var checkButton = new System.Windows.Controls.Button();
 
                 int diffSize = GetFilesDiff(filePath);
                 if (diffSize != 0)
@@ -94,16 +95,25 @@ namespace RegexStack_CodeRefactoringTool
                     checkButton.Content = String.Format("Merge ({0})", diffSize);
                     checkButton.Click += new System.Windows.RoutedEventHandler((sender, e) =>
                     {
-                        Process meldCheckProcess = Process.Start
-                            (
-                                @"C:\Program Files (x86)\Meld\meld\meld.exe"
-                            , String.Format("\"{0}\" \"{1}\"", filePath, filePath + "_thot_refactoring")
-                            );
-                        //meldCheckProcess.Exited += new EventHandler((a, b) =>
-                        //    {
-                        //        GCL.Logger.instance.Write("[DEBUG] : meldCheckProcess.Exited : Called");
-                        //    });
-                        meldCheckProcess.WaitForExit();
+                        try
+                        {
+                            Process meldCheckProcess = Process.Start
+                                (
+                                    @"C:\Program Files (x86)\Meld\meld\meld.exeCACA"
+                                , String.Format("\"{0}\" \"{1}\"", filePath, filePath + "_refactoring")
+                                );
+                            //meldCheckProcess.Exited += new EventHandler((a, b) =>
+                            //    {
+                            //        GCL.Logger.instance.Write("[DEBUG] : meldCheckProcess.Exited : Called");
+                            //    });
+                            meldCheckProcess.WaitForExit();
+                        }
+                        catch (System.Exception ex)
+                        {
+                            GCL.Logger.instance.Write("[Error] : Exception catch : " + ex.ToString());
+                            System.Windows.Forms.MessageBox.Show("Please check your Meld installation path\nShould be : [" + @"C:\Program Files (x86)\Meld\meld\meld.exe" + "]\n\nMore infos :\n" + ex.ToString(), "Exception catch", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            //System.Windows.Forms.MessageBox.Show("Please check your Meld installation path\nShould be : [" + @"C:\Program Files (x86)\Meld\meld\meld.exe" + "]\n\nMore infos :\n" + ex.ToString(), "Exception catch");
+                        }
                         int newDiffSize = GetFilesDiff(filePath);
                         checkButton.Content = String.Format("Merge ({0})", newDiffSize);
                         if (newDiffSize > 1000)

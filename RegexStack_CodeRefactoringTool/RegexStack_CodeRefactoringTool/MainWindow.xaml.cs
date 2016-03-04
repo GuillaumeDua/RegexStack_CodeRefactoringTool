@@ -305,10 +305,10 @@ namespace RegexStack_CodeRefactoringTool
                     count += regex.Matches(newFileContent).Count;
                     newFileContent = regex.Replace(newFileContent, StrInterpretLitterals(elem._replacement));
                 }
-                if (File.Exists(file + "_thot_refactoring"))
-                    File.Delete(file + "_thot_refactoring");
+                if (File.Exists(file + "_refactoring"))
+                    File.Delete(file + "_refactoring");
                 //if (fileContent != newFileContent)
-                    File.WriteAllText(file + "_thot_refactoring", newFileContent);
+                    File.WriteAllText(file + "_refactoring", newFileContent);
             }
 
             GCL.Logger.instance.Write(String.Format("Modification of [{0}] successful. {1} lines modified", txtBx_SourcesPath.Text, count));
