@@ -21,6 +21,8 @@ using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
 
+using GCL;
+
 namespace RegexStack_CodeRefactoringTool
 {
     /// <summary>
@@ -99,7 +101,7 @@ namespace RegexStack_CodeRefactoringTool
                         {
                             Process meldCheckProcess = Process.Start
                                 (
-                                    @"C:\Program Files (x86)\Meld\meld\meld.exeCACA"
+                                    @"C:\Program Files (x86)\Meld\meld\meld.exe"
                                 , String.Format("\"{0}\" \"{1}\"", filePath, filePath + "_refactoring")
                                 );
                             //meldCheckProcess.Exited += new EventHandler((a, b) =>

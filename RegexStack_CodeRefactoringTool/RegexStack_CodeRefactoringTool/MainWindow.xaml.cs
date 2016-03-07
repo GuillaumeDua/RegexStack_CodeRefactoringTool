@@ -97,14 +97,16 @@ namespace RegexStack_CodeRefactoringTool
         {
             public Regex_Replacement()
             { }
-            public Regex_Replacement(string regex, string replacement)
+            public Regex_Replacement(string regex, string replacement, bool? isActive = true)
             {
                 _regex = regex;
                 _replacement = replacement;
+                _isActive = isActive;
             }
 
             public string _regex = "";
             public string _replacement = "";
+            public bool? _isActive = true;
         }
 
         const string configurationFilePath = "./_configuration_file.xml";
@@ -112,6 +114,7 @@ namespace RegexStack_CodeRefactoringTool
         public MainWindow()
         {
             InitializeComponent();
+
             GCL.Logger.instance = new GCL.Logger.TextBoxLogger(this.txtBx_Log);
             this.LoadFromFile(configurationFilePath);
         }
@@ -120,15 +123,21 @@ namespace RegexStack_CodeRefactoringTool
         {
             var list_regex_replacement = new List<Regex_Replacement>();
 
-            if (this.grid_Regex.Children.Count != 4)    // Not only the "header-row"
+            int colCount = this.grid_Regex.ColumnDefinitions.Count;
+
+            if (this.grid_Regex.Children.Count != colCount)    // Not only the "header-row"
             {
-                for (int i = 3; i < this.grid_Regex.Children.Count; )
+                for (int i = colCount - 1; i < this.grid_Regex.Children.Count; i += colCount)
                 {
-                    var txtBx_regex = this.grid_Regex.Children[i] as TextBox;
-                    var txtBx_replacement = this.grid_Regex.Children[i + 1] as TextBox;
-                    // GCL.Logger.instance.Write(String.Format("Regex : [{0}] => [{1}]", txtBx_regex.Text, txtBx_replacement.Text));
-                    list_regex_replacement.Add(new Regex_Replacement(txtBx_regex.Text, txtBx_replacement.Text));
-                    i += 3;
+                    var chckBox_isValid = this.grid_Regex.Children[i] as CheckBox;
+                    var txtBx_regex = this.grid_Regex.Children[i + 1] as TextBox;
+                    var txtBx_replacement = this.grid_Regex.Children[i + 3] as TextBox;
+                    try
+                    {
+                        list_regex_replacement.Add(new Regex_Replacement(txtBx_regex.Text, txtBx_replacement.Text, chckBox_isValid.IsChecked));
+                    }
+                    catch (System.Exception)
+                    { }
                 }
             }
 
@@ -151,7 +160,7 @@ namespace RegexStack_CodeRefactoringTool
             list_regex_replacement = XML_Serialization.DeSerializeObject<List<Regex_Replacement>>(configurationFilePath);
 
             foreach (var elem in list_regex_replacement)
-                AddRegexRow(elem._regex, elem._replacement);
+                AddRegexRow(elem);
             GCL.Logger.instance.Write(String.Format("Loaded successfuly from [{0}]", configurationFilePath));
         }
 
@@ -165,8 +174,9 @@ namespace RegexStack_CodeRefactoringTool
             GCL.Logger.instance.Write(String.Format("Saved successfuly to [{0}]", configurationFilePath));
         }
 
-        private void AddRegexRow(string regexText, string replacementText)
+        private void AddRegexRow(Regex_Replacement elem)
         {
+            // AddRegexRow(elem._regex, elem._replacement, elem._isActive == true);
             try
             {
                 int rowIndex = this.grid_Regex.RowDefinitions.Count;
@@ -178,23 +188,55 @@ namespace RegexStack_CodeRefactoringTool
 
                 var regexColElem = new TextBox();
                 var replacementColElem = new TextBox();
-                var infoTextBlock = new TextBlock();
-                infoTextBlock.Text = "0";
+                var emptyTxt = new TextBlock();
+                var chckBx_toApply = new CheckBox();
 
-                regexColElem.Text = regexText;
-                replacementColElem.Text = replacementText;
+                emptyTxt.Text = "";
+                regexColElem.Text = elem._regex;
+                replacementColElem.Text = elem._replacement;
+                chckBx_toApply.IsChecked = elem._isActive;
 
+                // Checked
+                chckBx_toApply.Click += new System.Windows.RoutedEventHandler((sender, e) =>
+                {
+                    var _this_checkBox = sender as CheckBox;
+                    if (_this_checkBox.IsChecked == true)
+                    {
+                        regexColElem.Background = Brushes.White;
+                        replacementColElem.Background = Brushes.White;
+                    }
+                    else
+                    {
+                        regexColElem.Background = Brushes.Gray;
+                        replacementColElem.Background = Brushes.Gray;
+                    }
+                });
+
+                if (elem._isActive == true)
+                {
+                    regexColElem.Background = Brushes.White;
+                    replacementColElem.Background = Brushes.White;
+                }
+                else
+                {
+                    regexColElem.Background = Brushes.Gray;
+                    replacementColElem.Background = Brushes.Gray;
+                }
+
+                Grid.SetRow(chckBx_toApply, rowIndex);
                 Grid.SetRow(regexColElem, rowIndex);
+                Grid.SetRow(emptyTxt, rowIndex);
                 Grid.SetRow(replacementColElem, rowIndex);
-                Grid.SetRow(infoTextBlock, rowIndex);
 
-                Grid.SetColumn(regexColElem, 0);
-                Grid.SetColumn(replacementColElem, 2);
-                Grid.SetColumn(infoTextBlock, 3);
+                Grid.SetColumn(chckBx_toApply, 0);
+                Grid.SetColumn(regexColElem, 1);
+                Grid.SetColumn(emptyTxt, 2);
+                Grid.SetColumn(replacementColElem, 3);
 
+                this.grid_Regex.Children.Add(chckBx_toApply);
                 this.grid_Regex.Children.Add(regexColElem);
+                this.grid_Regex.Children.Add(emptyTxt);
                 this.grid_Regex.Children.Add(replacementColElem);
-                this.grid_Regex.Children.Add(infoTextBlock);
             }
             catch (System.Exception ex)
             {
@@ -204,7 +246,7 @@ namespace RegexStack_CodeRefactoringTool
 
         private void btn_addRegex_Click(object sender, RoutedEventArgs e)
         {
-            AddRegexRow("", "");
+            AddRegexRow(new Regex_Replacement("",  "", false));
         }
         
         private void btn_Load_Click(object sender, RoutedEventArgs e)
@@ -239,34 +281,42 @@ namespace RegexStack_CodeRefactoringTool
             }
 
             string[] files = Directory.GetFiles(txtBx_SourcesPath.Text);
-            int rowIndex = 4;
+            int rowIndex = grid_Regex.ColumnDefinitions.Count - 1;
             int countLinesToModify = 0;
             foreach (var elem in list_regex_replacement)
             {
-                int count = 0;
-                foreach (var file in files)
+                var textblock = this.grid_Regex.Children[rowIndex + 2] as TextBlock;
+                if (elem._isActive == false)
                 {
-                    var fileContent = File.ReadAllText(file);
-
-                    Regex regex = new Regex(StrInterpretLitterals(elem._regex), RegexOptions.IgnoreCase);
-                    count += regex.Matches(fileContent).Count;
+                    textblock.Text = "";
+                    textblock.Background = Brushes.Black;
                 }
-                var textblock = this.grid_Regex.Children[rowIndex + 1] as TextBlock;
-                textblock.Text = count.ToString();
-
-                if (count > 50)
-                    textblock.Background = Brushes.Green;
-                else if (count > 20)
-                    textblock.Background = Brushes.LightGreen;
-                else if (count > 10)
-                    textblock.Background = Brushes.Pink;
-                else if (count > 1)
-                    textblock.Background = Brushes.Orange;
                 else
-                    textblock.Background = Brushes.Red;
+                {
+                    int count = 0;
+                    foreach (var file in files)
+                    {
+                        var fileContent = File.ReadAllText(file);
 
-                rowIndex += 3;
-                countLinesToModify += count;
+                        Regex regex = new Regex(StrInterpretLitterals(elem._regex), RegexOptions.IgnoreCase);
+                        count += regex.Matches(fileContent).Count;
+                    }
+                    textblock.Text = count.ToString();
+                    countLinesToModify += count;
+
+                    if (count > 50)
+                        textblock.Background = Brushes.Green;
+                    else if (count > 20)
+                        textblock.Background = Brushes.LightGreen;
+                    else if (count > 10)
+                        textblock.Background = Brushes.Pink;
+                    else if (count > 1)
+                        textblock.Background = Brushes.Orange;
+                    else
+                        textblock.Background = Brushes.Red;
+                }
+
+                rowIndex += grid_Regex.ColumnDefinitions.Count;
             }
 
             GCL.Logger.instance.Write(String.Format("Analyse of [{0}] successful. {1} lines to modify", txtBx_SourcesPath.Text, countLinesToModify));
@@ -301,6 +351,9 @@ namespace RegexStack_CodeRefactoringTool
                 var newFileContent = fileContent;
                 foreach (var elem in list_regex_replacement)
                 {
+                    if (elem._isActive == false)
+                        continue;
+
                     Regex regex = new Regex(StrInterpretLitterals(elem._regex), RegexOptions.IgnoreCase);
                     count += regex.Matches(newFileContent).Count;
                     newFileContent = regex.Replace(newFileContent, StrInterpretLitterals(elem._replacement));

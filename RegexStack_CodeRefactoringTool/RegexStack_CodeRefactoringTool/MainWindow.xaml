@@ -24,19 +24,19 @@
             <ScrollViewer>
                 <Grid Name="grid_Regex" Margin="10,40,0,0" VerticalAlignment="Top">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="25"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="20"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="40"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Foreground="Aqua" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" FontWeight="Bold">Regex</TextBlock>
-                    <TextBlock Foreground="Aqua" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center">=></TextBlock>
-                    <TextBlock Foreground="Aqua" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" FontWeight="Bold">Replacement</TextBlock>
-                    <TextBlock Foreground="Aqua" Grid.Row="0" Grid.Column="3" HorizontalAlignment="Center" FontWeight="Bold">Match</TextBlock>
+                    <TextBlock Foreground="Aqua" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" FontWeight="Bold">Y/N</TextBlock>
+                    <TextBlock Foreground="Aqua" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" FontWeight="Bold">Regex</TextBlock>
+                    <TextBlock Foreground="Aqua" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center">=></TextBlock>
+                    <TextBlock Foreground="Aqua" Grid.Row="0" Grid.Column="3" HorizontalAlignment="Center" FontWeight="Bold">Replacement</TextBlock>
                 </Grid>
             </ScrollViewer>
         </Grid>

@@ -13,7 +13,7 @@ namespace GCL
 {
     [Serializable]
     [AttributeUsage(AttributeTargets.All)]
-    class MetaConfiguration : System.Attribute
+    public class MetaConfiguration : System.Attribute
     {
         public static readonly string CONFIGURATION_FILE_PATH = @".\config.txt";
 
@@ -128,7 +128,7 @@ namespace GCL
                 }
             }
 
-            Window window = new Window { Height = this.GetType().GetFields().Length * 40, Width = 600 }; // Background="#FF1B1A1A"
+            Window window = new Window { Height = this.GetType().GetFields().Length * 400, Width = 600 }; // Background="#FF1B1A1A"
             window.Content = stackPanel;
 
             window.ShowDialog();
